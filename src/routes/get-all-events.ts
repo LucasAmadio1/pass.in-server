@@ -1,5 +1,6 @@
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
+import { z } from 'zod'
 import { prisma } from '../lib/prisma'
 
 export async function getAllEvents(app: FastifyInstance) {
@@ -7,7 +8,18 @@ export async function getAllEvents(app: FastifyInstance) {
     '/events',
     {
       schema: {
-        response: {},
+        summary: 'Get all events',
+        tags: ['events'],
+        response: {
+          200: z.object({
+            events: z.array(
+              z.object({
+                id: z.string().uuid(),
+                title: z.string(),
+              })
+            ),
+          }),
+        },
       },
     },
     async (_, reply) => {
